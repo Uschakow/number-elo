@@ -8,15 +8,13 @@ def load_save():
     if os.path.exists(SAVE_FILE):
         with open(SAVE_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-            if "peak" not in data:
-                data["peak"] = data["elo"]
             return data
 
-    return {"elo": 1300, "win": 0, "lose": 0, "peak": 1300, }
+    return {"elo": 1300, "win": 0, "lose": 0 }
 
-def save_game(elo, win, lose, peak):
+def save_game(elo, win, lose):
     with open(SAVE_FILE, "w", encoding="utf-8") as f:
-        json.dump({"elo": elo, "win": win, "lose": lose, "peak": peak}, f)
+        json.dump({"elo": elo, "win": win, "lose": lose}, f)
 
 numbers = [1, 2, 3]
 game_2 = [1, 2] # легкий
@@ -63,7 +61,7 @@ def win_rate(win, lose):
         return 0.0
     return win / total * 100
 
-def profile(elo, win, lose, peak):
+def profile(elo, win, lose):
     print("=" * 50, "ВАШ ПРОФИЛЬ", "=" * 50)
     print(f"Ваше количество эло = {elo} ПТС")
     print(f"Ваше количество поражений = {lose} Поражений")
@@ -112,7 +110,7 @@ def main():
     while True:
         data = load_save()
         elo, win, lose = data["elo"], data["win"], data["lose"]
-        peak = data["peak"]
+        
 
         print("=" * 50, "NUMBER---ELO", 50 * "=")
         print("Добро пожаловать")
@@ -130,21 +128,19 @@ def main():
                 print(f"{name} — от {update} elo")      
                 print("|", "Система Рангов")
             print("-" * 25, "Недавние обновления", 50 * "-")
-            print("11.10")
-            print("+Добавлены новые ранги")
-            print("+Добавлены новые режимы")
-            print("+Добавлен винрейт, главное меню ")
-            print("+Добавлен штраф за выход из игры")
             print("12.10")
             print("+Добавлен новый режим - Роботблиц и Бот-Стратег!")
             print("-Исправлены баги с вводом")
+            print("14.10")
+            print("-Удалено пиковое значение ЭЛО")
+            
             
             continue
         elif cho.lower() == "q":
             print("Выходим...")
             quit()
         elif cho.lower() == "p":
-            profile(elo, win, lose, peak)
+            profile(elo, win, lose)
         else:
             print("Неправильный ввод")
             
@@ -159,7 +155,7 @@ def smart_robot():
     hint = None
     data = load_save()
     elo, win, lose = data["elo"], data["win"], data["lose"]
-    peak = data["peak"]
+    
 
     while True:
         print(
@@ -243,7 +239,7 @@ def smart_robot():
                     win += 1
                     print(f" Награда: +{reward} ЭЛО (Итого: {elo})")
 
-                save_game(elo, win, lose, peak)
+                save_game(elo, win, lose)
                 break
 
             elif hint < bot:
@@ -256,7 +252,7 @@ def smart_robot():
             print("Возвращаем...")
             continue
         elif ch.lower() == "n":
-            save_game(elo, win, lose, peak)
+            save_game(elo, win, lose, )
             print(f"Выходим. Итоговый рейтинг: {elo}")
             return
         else:
@@ -269,7 +265,7 @@ def smart_robot():
 def robot():
     data = load_save()
     elo, win, lose = data["elo"], data["win"], data["lose"]
-    peak = data["peak"]
+    
     while True:
         
         print(f"Напиши число от 1 до 3, Робот попытается угадать его (твой рейтинг: {elo})")
@@ -282,7 +278,7 @@ def robot():
             if ser.lower() == "y":
                 elo -= random.randint(45, 50)
                 print(f"Выходим. Штраф за незавершенный выход. Итоговый рейтинг: {elo}")
-                save_game(elo, win, lose, peak)
+                save_game(elo, win, lose)
                 return
             elif ser.lower() == "n":
                 continue
@@ -320,7 +316,7 @@ def robot():
             continue
 
         elif ch.lower() == "n":
-            save_game(elo, win, lose, peak)
+            save_game(elo, win, lose)
             print(f"Выходим. Итоговый рейтинг: {elo}")
             return
         else:
@@ -335,7 +331,7 @@ def robot():
 def hard():
     data = load_save()
     elo, win, lose = data["elo"], data["win"], data["lose"]
-    peak = data["peak"]
+    
     while True:
         g_2 = random.choice(game_3)
         print(f"Угадай мое число! От 0 до 10! (твой рейтинг: {elo})")
@@ -347,7 +343,7 @@ def hard():
             if ser.lower() == "y":
                 elo -= random.randint(45, 50)
                 print(f"Выходим. Штраф за незавершенный выход. Итоговый рейтинг: {elo}")
-                save_game(elo, win, lose, peak)
+                save_game(elo, win, lose)
                 return
             elif ser.lower() == "n":
                 continue
@@ -363,8 +359,8 @@ def hard():
             print(f"Победа! ")
             elo += random.randint(75, 100)
             win += 1
-            if elo > peak:
-                print(f"У тебя новое пиковое ЭЛО: {peak}!")
+            
+    
         else:
             print(f"Поражение! Было число {g_2}")
             elo -= random.randint(10, 35)
@@ -377,7 +373,7 @@ def hard():
             continue
 
         elif ch.lower() == "n":
-            save_game(elo, win, lose, peak)
+            save_game(elo, win, lose)
             print(f"Выходим. Итоговый рейтинг: {elo}")
             return
         else:
@@ -390,7 +386,7 @@ def hard():
 def easy():
     data = load_save()
     elo, win, lose = data["elo"], data["win"], data["lose"]
-    peak = data["peak"]
+    
     while True:
         g_1 = random.choice(game_2)
         print(f"Угадай мое число! От 1 до 2! (твой рейтинг: {elo})")
@@ -402,7 +398,7 @@ def easy():
             if ser.lower() == "y":
                 elo -= random.randint(45, 50)
                 print(f"Выходим. Штраф за незавершенный выход. Итоговый рейтинг: {elo}")
-                save_game(elo, win, lose, peak)
+                save_game(elo, win, lose)
                 return
             elif ser.lower() == "n":
                 continue
@@ -430,7 +426,7 @@ def easy():
             continue
 
         elif ch.lower() == "n":
-            save_game(elo, win, lose, peak)
+            save_game(elo, win, lose)
             print(f"Выходим. Итоговый рейтинг: {elo}")
             return
         else:
@@ -442,7 +438,7 @@ def easy():
 def play():
     data = load_save()
     elo, win, lose = data["elo"], data["win"], data["lose"] 
-    peak = data["peak"]
+    
 
     while True:
         num = random.choice(numbers)
@@ -455,7 +451,7 @@ def play():
             if ser.lower() == "y":
                 elo -= random.randint(45, 50)
                 print(f"Выходим. Штраф за незавершенный выход. Итоговый рейтинг: {elo}")
-                save_game(elo, win, lose, peak)
+                save_game(elo, win, lose)
                 return
             elif ser.lower() == "n":
                 continue
@@ -484,7 +480,7 @@ def play():
             continue
 
         elif ch.lower() == "n":
-            save_game(elo, win, lose, peak)
+            save_game(elo, win, lose)
             print(f"Выходим. Итоговый рейтинг: {elo}")
             return
         else:
